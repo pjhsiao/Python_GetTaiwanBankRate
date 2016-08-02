@@ -4,7 +4,6 @@ from bs4 import BeautifulSoup
 
 moneyType ='JPY'
 alarmRate = 0.3030 #init last_rate to assume 0.3030
-last_rate = 999 #init last_rate to assume 999
 def getCurrentRate():
     todayDate = date.today()
     todayStr = todayDate.__str__()
@@ -25,10 +24,16 @@ def getCurrentRate():
             _time = line.find_all('td')[0].next
             _rate = line.find_all('td')[3].next
             rateDict[str(_time)] = float(_rate)
+    try:
+        if len(rateDict) > 0:
+            #newly update time
+            last_time = (sorted(rateDict.keys())[len(rateDict.keys())-1])
+            #newly rate of JPY
+            last_rate = rateDict[last_time]
+        else:
+            last_rate = None
+    except IndexError as ie:
+        print("IndexError {}".format(ie.args))
+        last_rate = None
 
-    if len(rateDict) > 0:
-        #newly update time
-        last_time = (sorted(rateDict.keys())[len(rateDict.keys())-1])
-        #newly rate of JPY
-        last_rate = rateDict[last_time]
     return last_rate
